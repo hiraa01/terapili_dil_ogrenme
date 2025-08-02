@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ana Sayfa</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .navbar {
+      background: #007bff; color: white; padding: 10px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .navbar a { color: white; text-decoration: none; margin-left: 15px; }
+    .container {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white; padding: 20px; border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center;
+    }
+    .card a { text-decoration: none; color: #007bff; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div>👋 Hoş geldin, {{ username }}</div>
+    <div>
+      <a href="/dashboard">Ana Sayfa</a>
+      <a href="/chat">Chatbot</a>
+      <a href="/diary">Günlük</a>
+      <a href="/game">Kelime Oyunu</a>
+      <a href="/logout">Çıkış</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h3>🤖 Chatbot</h3>
+      <p>Dertleşmek ve terapi için</p>
+      <a href="/chat">Sohbete Başla</a>
+    </div>
+    <div class="card">
+      <h3📔>Günlük Yaz</h3>
+      <p>Duygularını yaz, kelimeler önerilsin</p>
+      <a href="/diary">Günlük Sayfası</a>
+    </div>
+    <div class="card">
+      <h3>🎮 Kelime Oyunu</h3>
+      <p>Öğrendiğin kelimelerle oyna</p>
+      <a href="/game">Oyuna Git</a>
+    </div>
+  </div>
+
+</body>
+</html>
