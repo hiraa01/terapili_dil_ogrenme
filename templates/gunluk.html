@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Günlük Yaz</title>
+  <style>
+    body { font-family: sans-serif; background: #f4f4f4; padding: 40px; text-align: center; }
+    textarea { width: 80%; height: 200px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 16px; }
+    button { margin-top: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 10px; background: #007bff; color: white; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .result { margin-top: 20px; padding: 20px; background: #fff; border-radius: 10px; display: inline-block; }
+  </style>
+</head>
+<body>
+
+  <h1>📖 Günlük Yaz</h1>
+  <form method="POST">
+    <textarea name="gunluk_text" placeholder="Bugün nasıl geçti?"></textarea><br>
+    <button type="submit">Gönder</button>
+  </form>
+
+  {% if text %}
+  <div class="result">
+    <p><strong>Yazdığın:</strong> {{ text }}</p>
+    <p><strong>Duygu:</strong> {{ mood }}</p>
+    <p><strong>Kelimeler:</strong> {{ words|join(', ') }}</p>
+    <p><strong>Chatbot Yorumu:</strong> {{ response }}</p>
+  </div>
+  {% endif %}
+
+</body>
+</html>
