@@ -54,10 +54,37 @@ def login():
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
-            return redirect(url_for('chat_page'))
+
+            # 🔹 Seviye kontrolü burada yapılır
+            if user['level'] is None or user['level'] == '':
+                return redirect(url_for('select_level'))
+            else:
+                return redirect(url_for('dashboard'))
         else:
             return 'Geçersiz giriş!'
     return render_template('login.html')
+
+#level select
+@app.route('/select_level', methods=['GET', 'POST'])
+def select_level():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        selected_level = request.form['level']
+        user_id = session['user_id']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET level = %s WHERE id = %s", (selected_level, user_id))
+        conn.commit()
+        conn.close()
+
+        session['level'] = selected_level  # Menüde göstermek için session’a ekle
+
+        return redirect(url_for('dashboard'))
+
+    return render_template('level_select.html')
 
 # Chat Sayfası (Sadece giriş yaptıysa)
 @app.route("/chat")
@@ -71,7 +98,7 @@ def chat_page():
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template("dashboard.html", username=session['username'])
+    return render_template('dashboard.html', username=session['username'], level=session.get('level', 'Belirtilmedi'))
 
 
 # Chatbot API (chat.html bu endpoint’e mesaj gönderir)
