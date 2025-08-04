@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8">
   <title>Psikolog Chatbot</title>
@@ -7,57 +8,195 @@
   <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap" rel="stylesheet">
   <style>
     /* — Genel Ayarlar — */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f4f7fb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      overflow: hidden;
     }
 
-    /* — Konteyner — */
-    .container {
+    /* — Üst Menü — */
+    .top-navbar {
+      background: #007bff;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .top-navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .top-navbar a:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .top-navbar a.active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* — Ana Konteyner — */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    /* — Yan Menü — */
+    .sidebar {
+      width: 280px;
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
       display: flex;
       flex-direction: column;
-      height: 100vh;    /* viewport’un tamamı */
-      max-width: 800px;
-      width: 100%;      /* genişlik %100 */
-      margin: 0 auto;   /* ortala yatayda */
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     }
 
-    /* — Başlık — */
-    .header {
-      padding: 16px;
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      background: #f8f9fa;
+    }
+
+    .new-chat-btn {
+      width: 100%;
+      padding: 12px;
       background: #007bff;
-      color: #fff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .new-chat-btn:hover {
+      background: #0056b3;
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .chat-item {
+      padding: 12px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-item:hover {
+      background: #f0f0f0;
+    }
+
+    .chat-item.active {
+      background: #e3f2fd;
+      border-left: 3px solid #007bff;
+    }
+
+    .chat-title {
+      font-size: 14px;
+      color: #333;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .delete-chat {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .chat-item:hover .delete-chat {
+      opacity: 1;
+    }
+
+    /* — Chat Alanı — */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .chat-header {
+      padding: 16px 20px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title-header {
       font-size: 18px;
-      text-align: center;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .back-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      background: #5a6268;
     }
 
     /* — Mod Seçici — */
     .mode-selector {
-      padding: 12px 16px;
+      padding: 12px 20px;
       border-bottom: 1px solid #e0e0e0;
-      text-align: center;
+      background: #fff;
     }
+
     .mode-selector select {
-      padding: 6px 10px;
-      border-radius: 4px;
+      padding: 8px 12px;
+      border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 14px;
     }
 
     /* — Sohbet Alanı — */
     #chatbox {
       flex: 1;
-      padding: 16px;
+      padding: 20px;
       background: #eef4fb;
       overflow-y: auto;
     }
+
     .typing {
       padding: 8px 16px;
       color: #666;
@@ -76,12 +215,14 @@
       clear: both;
       word-break: break-word;
     }
+
     .message.bot {
       background: #fff;
       color: #333;
       float: left;
       border-bottom-left-radius: 4px;
     }
+
     .message.bot::after {
       content: '';
       position: absolute;
@@ -91,12 +232,14 @@
       border-right: 8px solid #fff;
       border-bottom: 8px solid transparent;
     }
+
     .message.user {
       background: #007bff;
       color: #fff;
       float: right;
       border-bottom-right-radius: 4px;
     }
+
     .message.user::after {
       content: '';
       position: absolute;
@@ -109,22 +252,25 @@
 
     /* — Girdi Alanı — */
     .input-area {
-      padding: 12px 16px;
+      padding: 16px 20px;
       border-top: 1px solid #e0e0e0;
       display: flex;
       align-items: center;
+      background: #fff;
     }
+
     .input-area input {
       flex: 1;
-      padding: 10px 14px;
+      padding: 12px 16px;
       font-size: 15px;
       border: 1px solid #ccc;
       border-radius: 20px;
       outline: none;
     }
+
     .input-area button {
       margin-left: 12px;
-      padding: 10px 16px;
+      padding: 12px 20px;
       background: #007bff;
       color: #fff;
       border: none;
@@ -132,88 +278,469 @@
       cursor: pointer;
       transition: background 0.2s;
     }
+
     .input-area button:hover {
       background: #0056b3;
     }
+
+    /* — Boş durum — */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #666;
+      text-align: center;
+    }
+
+    .empty-state h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
   </style>
 </head>
+
 <body>
 
-  <div class="container">
-    <div class="header">🧠 Psikolog Chatbot</div>
-
-    <div class="mode-selector">
-      <label for="mode">Mod:</label>
-      <select id="mode">
-        <option value="aile">Aile</option>
-        <option value="ask">Aşk Hayatı</option>
-        <option value="akademik">Akademik Hayat</option>
-        <option value="serbest">Serbest Konuşma</option>
-      </select>
-    </div>
-
-    <div id="chatbox"></div>
-    <div id="typing-indicator" class="typing" style="display:none;">Bot yazıyor...</div>
-
-    <div class="input-area">
-      <input type="text" id="userInput" placeholder="Mesajınızı yazın..." />
-      <button onclick="sendMessage()">Gönder</button>
+  <!-- Üst Menü -->
+  <div class="top-navbar">
+    <div>🧠 Psikolog Chatbot</div>
+    <div>
+      <a href="/dashboard">🏠 Ana Sayfa</a>
+      <a href="/chat" class="active">💬 Chatbot</a>
+      <a href="/gunluk">📔 Günlük</a>
+      <a href="/game">🎮 Kelime Oyunu</a>
+      <a href="/logout">🚪 Çıkış</a>
     </div>
   </div>
 
-<script>
-  async function sendMessage() {
-    const inputEl = document.getElementById('userInput');
-    const msg = inputEl.value.trim();
-    const mode = document.getElementById('mode').value;
-    if (!msg) return;
+  <!-- Ana Konteyner -->
+  <div class="main-container">
 
-    const chatbox = document.getElementById('chatbox');
-    // 1) Kullanıcı mesajı
-    chatbox.innerHTML += `<div class="message user"><strong>Sen:</strong> ${msg}</div>`;
-    chatbox.scrollTop = chatbox.scrollHeight;
-    inputEl.value = '';
+    <!-- Yan Menü -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <button class="new-chat-btn" onclick="createNewChat()">🆕 Yeni Sohbet</button>
+      </div>
+      <div class="chat-list" id="chatList">
+        <!-- Sohbet listesi buraya gelecek -->
+      </div>
+    </div>
 
-    // 2) Yazıyor göstergesi
-    const typing = document.getElementById('typing-indicator');
-    typing.style.display = 'block';
+    <!-- Chat Alanı -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-title-header" id="currentChatTitle">Yeni Sohbet</div>
+        <a href="/dashboard" class="back-btn">← Anasayfaya Dön</a>
+      </div>
 
-    // 3) Sunucuya POST
-    let replyText = '';
-    try {
-      const res = await fetch('/get', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ msg, mode })
-      });
-      const data = await res.json();
-      replyText = data.reply;
-    } catch (err) {
-      console.error(err);
-      replyText = "Özür dilerim, şu anda yanıt veremiyorum.";
-    }
-    typing.style.display = 'none';
+      <div class="mode-selector">
+        <label for="mode">Mod:</label>
+        <select id="mode" onchange="onModeChange()">
+          <option value="aile">Aile</option>
+          <option value="ask">Aşk Hayatı</option>
+          <option value="akademik">Akademik Hayat</option>
+          <option value="serbest">Serbest Konuşma</option>
+        </select>
+      </div>
 
-    // 4) Boş bot baloncuğu oluştur
-    const botDiv = document.createElement('div');
-    botDiv.className = 'message bot';
-    botDiv.innerHTML = '<strong>Bot:</strong> ';
-    chatbox.appendChild(botDiv);
-    chatbox.scrollTop = chatbox.scrollHeight;
+      <div id="chatbox"></div>
+      <div id="typing-indicator" class="typing" style="display:none;">Bot yazıyor...</div>
 
-    // 5) Harf harf yazdıran fonksiyon
-    let idx = 0;
-    function typeWriter() {
-      if (idx < replyText.length) {
-        botDiv.innerHTML += replyText.charAt(idx);
-        idx++;
-        chatbox.scrollTop = chatbox.scrollHeight;
-        setTimeout(typeWriter, 25);  // milisaniye cinsinden hız
+      <div class="input-area">
+        <input type="text" id="userInput" placeholder="Mesajınızı yazın..." onkeydown="handleKeyPress(event)" />
+        <button onclick="sendMessage()">Gönder</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sohbet yönetimi
+    let chats = [];
+    let currentChatId = null;
+
+    // Sayfa yüklendiğinde
+    document.addEventListener('DOMContentLoaded', function () {
+      loadChats();
+    });
+
+    // Sohbetleri veritabanından yükle
+    async function loadChats() {
+      try {
+        const response = await fetch('/api/chats');
+        if (response.ok) {
+          chats = await response.json();
+          displayChats();
+
+          // İlk sohbeti yükle veya yeni sohbet oluştur
+          if (chats.length > 0) {
+            loadChat(chats[0].id);
+          } else {
+            createNewChat();
+          }
+        } else {
+          console.error('Sohbetler yüklenemedi');
+        }
+      } catch (error) {
+        console.error('Hata:', error);
       }
     }
-    typeWriter();
-  }
-</script>
+
+    // Yeni sohbet oluştur
+    async function createNewChat() {
+      try {
+        const response = await fetch('/api/chats', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title: 'Yeni Sohbet'
+          })
+        });
+
+        if (response.ok) {
+          const newChat = await response.json();
+          chats.unshift(newChat);
+          displayChats();
+          loadChat(newChat.id);
+        } else {
+          console.error('Yeni sohbet oluşturulamadı');
+        }
+      } catch (error) {
+        console.error('Hata:', error);
+      }
+    }
+
+    // Sohbeti yükle
+    async function loadChat(chatId) {
+      currentChatId = chatId;
+      const chat = chats.find(c => c.id === chatId);
+      if (!chat) return;
+
+      // Başlığı güncelle
+      document.getElementById('currentChatTitle').textContent = chat.title;
+
+      // Mesajları veritabanından yükle
+      try {
+        const response = await fetch(`/api/chats/${chatId}/messages`);
+        if (response.ok) {
+          const messages = await response.json();
+          displayMessages(messages);
+        } else {
+          console.error('Mesajlar yüklenemedi');
+        }
+      } catch (error) {
+        console.error('Hata:', error);
+      }
+
+      // Aktif sohbeti işaretle
+      document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      document.querySelector(`[data-chat-id="${chatId}"]`)?.classList.add('active');
+    }
+
+    // Mesajları göster
+    function displayMessages(messages) {
+      const chatbox = document.getElementById('chatbox');
+      chatbox.innerHTML = '';
+
+      messages.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${msg.message_type}`;
+        msgDiv.innerHTML = `<strong>${msg.message_type === 'user' ? 'Sen:' : 'Bot:'}</strong> ${msg.message_text}`;
+        chatbox.appendChild(msgDiv);
+      });
+
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    // Sohbeti sil
+    async function deleteChat(chatId, event) {
+      event.stopPropagation();
+
+      // Özel onay dialogu göster
+      const confirmed = await showDeleteConfirmation();
+      if (!confirmed) return;
+
+      try {
+        const response = await fetch(`/api/chats/${chatId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          chats = chats.filter(c => c.id !== chatId);
+          displayChats();
+
+          if (currentChatId === chatId) {
+            if (chats.length > 0) {
+              loadChat(chats[0].id);
+            } else {
+              createNewChat();
+            }
+          }
+        } else {
+          console.error('Sohbet silinemedi');
+        }
+      } catch (error) {
+        console.error('Hata:', error);
+      }
+    }
+
+    // Özel silme onay dialogu
+    function showDeleteConfirmation() {
+      return new Promise((resolve) => {
+        // Mevcut dialog varsa kaldır
+        const existingDialog = document.getElementById('deleteDialog');
+        if (existingDialog) {
+          existingDialog.remove();
+        }
+
+        // Yeni dialog oluştur
+        const dialog = document.createElement('div');
+        dialog.id = 'deleteDialog';
+        dialog.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        `;
+
+        dialog.innerHTML = `
+          <div style="
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+          ">
+            <h3 style="margin-bottom: 20px; color: #333;">Sohbeti Sil</h3>
+            <p style="margin-bottom: 25px; color: #666;">Bu sohbeti kalıcı olarak silmek istediğinizden emin misiniz?</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+              <button id="cancelDelete" style="
+                padding: 10px 20px;
+                border: 1px solid #ccc;
+                background: #f8f9fa;
+                border-radius: 5px;
+                cursor: pointer;
+              ">İptal</button>
+              <button id="confirmDelete" style="
+                padding: 10px 20px;
+                border: none;
+                background: #dc3545;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+              ">Sil</button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(dialog);
+
+        // Event listeners
+        document.getElementById('cancelDelete').onclick = () => {
+          dialog.remove();
+          resolve(false);
+        };
+
+        document.getElementById('confirmDelete').onclick = () => {
+          dialog.remove();
+          resolve(true);
+        };
+
+        // Dışarı tıklayınca iptal
+        dialog.onclick = (e) => {
+          if (e.target === dialog) {
+            dialog.remove();
+            resolve(false);
+          }
+        };
+      });
+    }
+
+    // Sohbet listesini göster
+    function displayChats() {
+      const chatList = document.getElementById('chatList');
+      chatList.innerHTML = '';
+
+      chats.forEach(chat => {
+        const chatItem = document.createElement('div');
+        chatItem.className = 'chat-item';
+        chatItem.setAttribute('data-chat-id', chat.id);
+        chatItem.onclick = () => loadChat(chat.id);
+
+        chatItem.innerHTML = `
+          <div class="chat-title">${chat.title}</div>
+          <button class="delete-chat" onclick="deleteChat(${chat.id}, event)">🗑️</button>
+        `;
+
+        chatList.appendChild(chatItem);
+      });
+    }
+
+    // Sohbet başlığını güncelle
+    async function updateChatTitle(chatId, title) {
+      try {
+        const response = await fetch(`/api/chats/${chatId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title })
+        });
+
+        if (response.ok) {
+          const chat = chats.find(c => c.id === chatId);
+          if (chat) {
+            chat.title = title;
+            displayChats();
+            document.getElementById('currentChatTitle').textContent = title;
+          }
+        }
+      } catch (error) {
+        console.error('Başlık güncellenemedi:', error);
+      }
+    }
+
+    // Enter tuşu ile mesaj gönderme
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    // Mod değişikliği
+    async function onModeChange() {
+      if (!currentChatId) return;
+
+      const mode = document.getElementById('mode').value;
+
+      try {
+        const response = await fetch(`/api/chat/${currentChatId}/mode-change`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ mode })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Mod değişikliği mesajını göster
+          const chatbox = document.getElementById('chatbox');
+          const modeDiv = document.createElement('div');
+          modeDiv.className = 'message bot mode-change';
+          modeDiv.innerHTML = `<strong>Bot:</strong> ${data.message}`;
+          chatbox.appendChild(modeDiv);
+          chatbox.scrollTop = chatbox.scrollHeight;
+        }
+      } catch (error) {
+        console.error('Mod değişikliği hatası:', error);
+      }
+    }
+
+    // Mesaj gönder
+    async function sendMessage() {
+      const inputEl = document.getElementById('userInput');
+      const msg = inputEl.value.trim();
+      const mode = document.getElementById('mode').value;
+      if (!msg) return;
+
+      if (!currentChatId) {
+        await createNewChat();
+        return;
+      }
+
+      const chatbox = document.getElementById('chatbox');
+
+      // Kullanıcı mesajını göster
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user';
+      userDiv.innerHTML = `<strong>Sen:</strong> ${msg}`;
+      chatbox.appendChild(userDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      inputEl.value = '';
+
+      // İlk mesajsa başlığı güncelle
+      const chat = chats.find(c => c.id === currentChatId);
+      if (chat && chat.title === 'Yeni Sohbet') {
+        const shortMsg = msg.length > 30 ? msg.substring(0, 30) + '...' : msg;
+        await updateChatTitle(currentChatId, shortMsg);
+      }
+
+      // Yazıyor göstergesi
+      const typing = document.getElementById('typing-indicator');
+      typing.style.display = 'block';
+
+      // Bot yanıtını al
+      let replyText = '';
+      let wordsCount = 0;
+      try {
+        const res = await fetch('/get', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            msg,
+            mode,
+            chat_id: currentChatId
+          })
+        });
+        const data = await res.json();
+        replyText = data.reply;
+        wordsCount = data.words_count || 0;
+      } catch (err) {
+        console.error(err);
+        replyText = "Özür dilerim, şu anda yanıt veremiyorum.";
+      }
+
+      typing.style.display = 'none';
+
+      // Bot mesajını göster
+      const botDiv = document.createElement('div');
+      botDiv.className = 'message bot';
+      botDiv.innerHTML = '<strong>Bot:</strong> ';
+      chatbox.appendChild(botDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      // Harf harf yazdır
+      let idx = 0;
+      function typeWriter() {
+        if (idx < replyText.length) {
+          botDiv.innerHTML += replyText.charAt(idx);
+          idx++;
+          chatbox.scrollTop = chatbox.scrollHeight;
+          setTimeout(typeWriter, 25);
+        } else {
+          // Kelime sayısı bilgisini göster
+          if (wordsCount > 0) {
+            const wordsInfo = document.createElement('div');
+            wordsInfo.className = 'message bot words-info';
+            wordsInfo.style.fontSize = '12px';
+            wordsInfo.style.color = '#666';
+            wordsInfo.style.fontStyle = 'italic';
+            wordsInfo.innerHTML = `📊 ${wordsCount} kelime tespit edildi ve ilerlemenize eklendi!`;
+            chatbox.appendChild(wordsInfo);
+            chatbox.scrollTop = chatbox.scrollHeight;
+          }
+        }
+      }
+      typeWriter();
+    }
+  </script>
 
 </body>
+
 </html>

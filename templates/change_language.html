@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dil Değiştir</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .current-language {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .current-language h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .current-language .flag {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .language-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .language-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .language-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .language-option .flag {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .language-option .name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .info-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🌍 Dil Değiştir</h1>
+
+        <div class="current-language">
+            <h3>Mevcut Dil</h3>
+            <div class="flag" id="currentFlag">🇺🇸</div>
+            <div id="currentLanguageName">İngilizce</div>
+        </div>
+
+        <div class="warning">
+            ⚠️ <strong>Dikkat:</strong> Dil değiştirdiğinizde, chatbot yanıtları ve kelime oyunları yeni dilde
+            olacaktır.
+        </div>
+
+        <form method="POST">
+            <div class="language-grid">
+                <div class="language-option" data-value="english">
+                    <span class="flag">🇺🇸</span>
+                    <div class="name">İngilizce</div>
+                </div>
+                <div class="language-option" data-value="spanish">
+                    <span class="flag">🇪🇸</span>
+                    <div class="name">İspanyolca</div>
+                </div>
+                <div class="language-option" data-value="french">
+                    <span class="flag">🇫🇷</span>
+                    <div class="name">Fransızca</div>
+                </div>
+                <div class="language-option" data-value="korean">
+                    <span class="flag">🇰🇷</span>
+                    <div class="name">Korece</div>
+                </div>
+                <div class="language-option" data-value="japanese">
+                    <span class="flag">🇯🇵</span>
+                    <div class="name">Japonca</div>
+                </div>
+                <div class="language-option" data-value="arabic">
+                    <span class="flag">🇸🇦</span>
+                    <div class="name">Arapça</div>
+                </div>
+                <div class="language-option" data-value="turkish">
+                    <span class="flag">🇹🇷</span>
+                    <div class="name">Türkçe</div>
+                </div>
+            </div>
+            <input type="hidden" name="language" id="selectedLanguage" value="{{ current_language }}">
+
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='/dashboard'">🔙 Geri
+                    Dön</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">✅ Dil Değiştir</button>
+            </div>
+        </form>
+
+        <div class="info-text">
+            <p>💡 <strong>Not:</strong> Dil değişikliği anında uygulanacaktır.</p>
+            <p>🎮 Yeni dilde kelime oyunları ve chatbot yanıtları alacaksınız.</p>
+        </div>
+    </div>
+
+    <script>
+        const currentLanguage = '{{ current_language }}';
+        const languageFlags = {
+            'english': '🇺🇸',
+            'spanish': '🇪🇸',
+            'french': '🇫🇷',
+            'korean': '🇰🇷',
+            'japanese': '🇯🇵',
+            'arabic': '🇸🇦',
+            'turkish': '🇹🇷'
+        };
+
+        const languageNames = {
+            'english': 'İngilizce',
+            'spanish': 'İspanyolca',
+            'french': 'Fransızca',
+            'korean': 'Korece',
+            'japanese': 'Japonca',
+            'arabic': 'Arapça',
+            'turkish': 'Türkçe'
+        };
+
+        // Mevcut dili göster
+        document.getElementById('currentFlag').textContent = languageFlags[currentLanguage] || '🇺🇸';
+        document.getElementById('currentLanguageName').textContent = languageNames[currentLanguage] || 'İngilizce';
+
+        // Dil seçimi
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', function () {
+                document.querySelectorAll('.language-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedLanguage').value = this.dataset.value;
+                updateSubmitButton();
+            });
+        });
+
+        function updateSubmitButton() {
+            const selectedLanguage = document.getElementById('selectedLanguage').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (selectedLanguage && selectedLanguage !== currentLanguage) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = `✅ ${languageNames[selectedLanguage]} Olarak Değiştir`;
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '✅ Dil Değiştir';
+            }
+        }
+
+        // Mevcut dili işaretle
+        document.querySelector(`.language-option[data-value="${currentLanguage}"]`).classList.add('selected');
+        updateSubmitButton();
+    </script>
+</body>
+
+</html>

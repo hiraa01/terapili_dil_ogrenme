@@ -1,28 +1,424 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
-    <title>İngilizce Seviye Seçimi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seviye ve Dil Seçimi</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f8ff; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
-        select, button { padding: 10px; margin-top: 15px; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .language-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .language-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .language-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .language-option .flag {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .language-option .name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .level-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .level-option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .level-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .level-option .level {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .level-option .description {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .info-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        .level-progress {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border: 2px solid #dee2e6;
+        }
+
+        .progress-title {
+            text-align: center;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: #dee2e6;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .progress-step.active:not(:last-child)::after {
+            background: #667eea;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dee2e6;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0 auto 5px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .step-label.active {
+            color: #667eea;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h2>İngilizce Seviyeni Seç</h2>
-        <form method="POST" action="/select_level">
-            <select name="level" required>
-                <option value="A1">A1 - Başlangıç</option>
-                <option value="A2">A2 - Temel</option>
-                <option value="B1">B1 - Orta</option>
-                <option value="B2">B2 - Üst-Orta</option>
-                <option value="C1">C1 - İleri</option>
-                <option value="C2">C2 - Uzman</option>
-            </select><br>
-            <button type="submit">Seçimi Kaydet</button>
+        <h1>🎯 Seviye ve Dil Seçimi</h1>
+
+        <form method="POST">
+            <div class="section">
+                <h2>🌍 Öğrenmek İstediğiniz Dil</h2>
+                <div class="language-grid">
+                    <div class="language-option" data-value="english">
+                        <span class="flag">🇺🇸</span>
+                        <div class="name">İngilizce</div>
+                    </div>
+                    <div class="language-option" data-value="spanish">
+                        <span class="flag">🇪🇸</span>
+                        <div class="name">İspanyolca</div>
+                    </div>
+                    <div class="language-option" data-value="french">
+                        <span class="flag">🇫🇷</span>
+                        <div class="name">Fransızca</div>
+                    </div>
+                    <div class="language-option" data-value="korean">
+                        <span class="flag">🇰🇷</span>
+                        <div class="name">Korece</div>
+                    </div>
+                    <div class="language-option" data-value="japanese">
+                        <span class="flag">🇯🇵</span>
+                        <div class="name">Japonca</div>
+                    </div>
+                    <div class="language-option" data-value="arabic">
+                        <span class="flag">🇸🇦</span>
+                        <div class="name">Arapça</div>
+                    </div>
+                    <div class="language-option" data-value="turkish">
+                        <span class="flag">🇹🇷</span>
+                        <div class="name">Türkçe</div>
+                    </div>
+                </div>
+                <input type="hidden" name="language" id="selectedLanguage" value="english">
+            </div>
+
+            <div class="section">
+                <h2>📚 İngilizce Seviyeniz</h2>
+
+                <!-- Seviye İlerleme Çubuğu -->
+                <div class="level-progress">
+                    <div class="progress-title">🎯 Hedef: İngilizce Seviye İlerlemeniz</div>
+                    <div class="progress-bar">
+                        <div class="progress-step" data-level="A1">
+                            <div class="step-circle">A1</div>
+                            <div class="step-label">Başlangıç</div>
+                        </div>
+                        <div class="progress-step" data-level="A2">
+                            <div class="step-circle">A2</div>
+                            <div class="step-label">Temel</div>
+                        </div>
+                        <div class="progress-step" data-level="B1">
+                            <div class="step-circle">B1</div>
+                            <div class="step-label">Orta</div>
+                        </div>
+                        <div class="progress-step" data-level="B2">
+                            <div class="step-circle">B2</div>
+                            <div class="step-label">İyi</div>
+                        </div>
+                        <div class="progress-step" data-level="C1">
+                            <div class="step-circle">C1</div>
+                            <div class="step-label">İleri</div>
+                        </div>
+                        <div class="progress-step" data-level="C2">
+                            <div class="step-circle">C2</div>
+                            <div class="step-label">Uzman</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="level-grid">
+                    <div class="level-option" data-value="A1">
+                        <div class="level">A1</div>
+                        <div class="description">Başlangıç</div>
+                    </div>
+                    <div class="level-option" data-value="A2">
+                        <div class="level">A2</div>
+                        <div class="description">Temel</div>
+                    </div>
+                    <div class="level-option" data-value="B1">
+                        <div class="level">B1</div>
+                        <div class="description">Orta</div>
+                    </div>
+                    <div class="level-option" data-value="B2">
+                        <div class="level">B2</div>
+                        <div class="description">İyi</div>
+                    </div>
+                    <div class="level-option" data-value="C1">
+                        <div class="level">C1</div>
+                        <div class="description">İleri</div>
+                    </div>
+                </div>
+                <input type="hidden" name="level" id="selectedLevel" value="A1">
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">✅ Seçimleri Kaydet</button>
         </form>
+
+        <div class="info-text">
+            <p>💡 <strong>Not:</strong> Seçtiğiniz dil, chatbot yanıtları ve kelime oyunlarında kullanılacaktır.</p>
+            <p>🎮 İngilizce seviyeniz, kelime oyunundaki zorluk seviyesini belirler.</p>
+        </div>
     </div>
+
+    <script>
+        // Dil seçimi
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', function () {
+                document.querySelectorAll('.language-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedLanguage').value = this.dataset.value;
+                updateSubmitButton();
+            });
+        });
+
+        // Seviye seçimi
+        document.querySelectorAll('.level-option').forEach(option => {
+            option.addEventListener('click', function () {
+                document.querySelectorAll('.level-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedLevel').value = this.dataset.value;
+                updateProgressBar(this.dataset.value);
+                updateSubmitButton();
+            });
+        });
+
+        function updateProgressBar(selectedLevel) {
+            const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+            const selectedIndex = levels.indexOf(selectedLevel);
+
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const circle = step.querySelector('.step-circle');
+                const label = step.querySelector('.step-label');
+
+                if (index <= selectedIndex) {
+                    step.classList.add('active');
+                    circle.classList.add('active');
+                    label.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                    circle.classList.remove('active');
+                    label.classList.remove('active');
+                }
+            });
+        }
+
+        function updateSubmitButton() {
+            const language = document.getElementById('selectedLanguage').value;
+            const level = document.getElementById('selectedLevel').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (language && level) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = `✅ ${getLanguageName(language)} - ${level} Seviyesi Kaydet`;
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '✅ Seçimleri Kaydet';
+            }
+        }
+
+        function getLanguageName(code) {
+            const languages = {
+                'english': 'İngilizce',
+                'spanish': 'İspanyolca',
+                'french': 'Fransızca',
+                'korean': 'Korece',
+                'japanese': 'Japonca',
+                'arabic': 'Arapça',
+                'turkish': 'Türkçe'
+            };
+            return languages[code] || code;
+        }
+
+        // Varsayılan seçimleri işaretle
+        document.querySelector('.language-option[data-value="english"]').classList.add('selected');
+        document.querySelector('.level-option[data-value="A1"]').classList.add('selected');
+        updateProgressBar('A1');
+        updateSubmitButton();
+    </script>
 </body>
+
 </html>

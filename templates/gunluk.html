@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Günlük Yaz</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Üst Menü */
+    .top-navbar {
+      background: #007bff;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .top-navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .top-navbar a:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .top-navbar a.active {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .back-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      background: #5a6268;
+    }
+
+    /* Ana içerik */
+    .main-content {
+      padding: 40px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    textarea {
+      width: 80%;
+      height: 200px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      display: inline-block;
+      text-align: left;
+      max-width: 100%;
+    }
+
+    /* Günlük listesi */
+    .diary-list {
+      margin-top: 40px;
+      text-align: left;
+    }
+
+    .diary-item {
+      background: white;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .diary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .diary-date {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .diary-text {
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .diary-analysis {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .diary-analysis h4 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+
+    .diary-analysis p {
+      margin: 5px 0;
+      color: #666;
+    }
+
+    .words-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .word-tag {
+      background: #007bff;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    .toggle-btn {
+      background: #28a745;
+      margin-left: 10px;
+    }
+
+    .toggle-btn:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Üst Menü -->
+  <div class="top-navbar">
+    <div>📖 Günlük Yaz</div>
+    <div>
+      <a href="/dashboard">🏠 Ana Sayfa</a>
+      <a href="/chat">💬 Chatbot</a>
+      <a href="/gunluk" class="active">📔 Günlük</a>
+      <a href="/game">🎮 Kelime Oyunu</a>
+      <a href="/logout">🚪 Çıkış</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1>📖 Günlük Yaz</h1>
+    <form method="POST">
+      <textarea name="gunluk_text" placeholder="How was your day? Tell me everything! 😊"></textarea><br>
+      <button type="submit">Gönder</button>
+    </form>
+
+    {% if text %}
+    <div class="result">
+      <p><strong>Yazdığın:</strong> {{ text }}</p>
+      <p><strong>Duygu:</strong> {{ mood }}</p>
+      <p><strong>Kelimeler:</strong> {{ words|join(', ') }}</p>
+      <p><strong>Chatbot Yorumu:</strong> {{ response }}</p>
+      {% if words_count %}
+      <p><strong>📊 Kelime Sayısı:</strong> {{ words_count }} kelime tespit edildi ve ilerlemenize eklendi!</p>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Günlük Listesi -->
+    <div class="diary-list">
+      <h2>📚 Geçmiş Günlük Yazılarım</h2>
+      <div id="diaryEntries">
+        <!-- Günlük yazıları buraya yüklenecek -->
+      </div>
+    </div>
+
+    <div style="margin-top: 30px;">
+      <a href="/dashboard" class="back-btn">← Anasayfaya Dön</a>
+    </div>
+  </div>
+
+  <script>
+    // Günlük yazılarını yükle
+    async function loadDiaryEntries() {
+      try {
+        const response = await fetch('/api/diary');
+        if (response.ok) {
+          const entries = await response.json();
+          displayDiaryEntries(entries);
+        } else {
+          console.error('Günlük yazıları yüklenemedi');
+        }
+      } catch (error) {
+        console.error('Hata:', error);
+      }
+    }
+
+    // Günlük yazılarını göster
+    function displayDiaryEntries(entries) {
+      const container = document.getElementById('diaryEntries');
+
+      if (entries.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Henüz günlük yazısı yok. İlk yazınızı yazın!</p>';
+        return;
+      }
+
+      container.innerHTML = entries.map(entry => {
+        const date = new Date(entry.created_at).toLocaleDateString('tr-TR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const wordsHtml = entry.words && entry.words.length > 0
+          ? `<div class="words-list">${entry.words.map(word => `<span class="word-tag">${word}</span>`).join('')}</div>`
+          : '<p>Kelimeler tespit edilemedi</p>';
+
+        return `
+          <div class="diary-item">
+            <div class="diary-header">
+              <span class="diary-date">📅 ${date}</span>
+              <button class="toggle-btn" onclick="toggleAnalysis(this)">Analizi Göster</button>
+            </div>
+            <div class="diary-text">
+              <strong>Yazdığın:</strong><br>
+              ${entry.text}
+            </div>
+            <div class="diary-analysis" style="display: none;">
+              <h4>📊 Analiz Sonuçları</h4>
+              <p><strong>Duygu:</strong> ${entry.mood || 'Belirlenemedi'}</p>
+              <p><strong>Önerilen Kelimeler:</strong></p>
+              ${wordsHtml}
+              <p><strong>Chatbot Yorumu:</strong></p>
+              <p style="font-style: italic;">${entry.bot_response || 'Yorum yok'}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Analiz bölümünü aç/kapat
+    function toggleAnalysis(button) {
+      const analysis = button.parentElement.nextElementSibling.nextElementSibling;
+      const isVisible = analysis.style.display !== 'none';
+
+      analysis.style.display = isVisible ? 'none' : 'block';
+      button.textContent = isVisible ? 'Analizi Göster' : 'Analizi Gizle';
+    }
+
+    // Sayfa yüklendiğinde günlük yazılarını yükle
+    document.addEventListener('DOMContentLoaded', function () {
+      loadDiaryEntries();
+    });
+  </script>
+
+</body>
+
+</html>
